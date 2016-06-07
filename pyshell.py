@@ -9,12 +9,14 @@ def set_winsize(fd, row, col):
 class MyProcessProtocol(protocol.ProcessProtocol):
     def __init__(self,fd):
         self.fd=fd
+        #Demo stuff.
         reactor.callLater(0, self.execute, 'export TERM=xterm')
         reactor.callLater(0.1, self.execute, 'cmatrix')
-        reactor.callLater(3, self.resize, (20,20))
-#        reactor.callLater(2, self.execute, '\x03') #BREAK
-#        reactor.callLater(1, self.execute, 'tput cols')
-#        reactor.callLater(1, self.execute, 'tput lines')
+        reactor.callLater(1, self.resize, (20,20))
+        reactor.callLater(4, self.execute, '\x03') #BREAK
+        reactor.callLater(5, self.execute, 'tput cols')
+        reactor.callLater(5, self.execute, 'tput lines')
+        reactor.callLater(6, self.execute, '\x04') #DIE
 
     def execute(self,cmd):
         if self.transport:
@@ -24,12 +26,14 @@ class MyProcessProtocol(protocol.ProcessProtocol):
         set_winsize(self.fd,dims[0],dims[1])
 
     def outReceived(self, data):
-#        print(repr(data))
+        #Do stuff here.
         print(data)
-#        pass
+
+    def processExited(self,reason):
+        print(reason)
+        reactor.stop()
 
 master, slave = pty.openpty()
 proc = MyProcessProtocol(master)
-#reactor.spawnProcess(proc, 'script', ['/dev/null'])
-reactor.spawnProcess(proc, 'script', ['/dev/null'],usePTY=(master,slave,'xterm'))
+reactor.spawnProcess(proc, 'bash',usePTY=(master,slave,'xterm'))
 reactor.run()
