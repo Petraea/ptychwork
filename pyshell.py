@@ -1,5 +1,5 @@
 import pty, termios, struct, fcntl
-from twisted.internet import protocol, reactor, task
+from twisted.internet import protocol, reactor
 
 def set_winsize(fd, row, col):
 #                           row, col, xpix(unused), ypix(unused))
