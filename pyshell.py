@@ -1,8 +1,9 @@
 import pty, termios, struct, fcntl
 from twisted.internet import protocol, reactor, task
 
-def set_winsize(fd, row, col, xpix=0, ypix=0):
-    winsize = struct.pack("HHHH", row, col, xpix, ypix)
+def set_winsize(fd, row, col):
+#                           row, col, xpix(unused), ypix(unused))
+    winsize = struct.pack("HHHH", row, col, 0, 0)
     fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
 
 class MyProcessProtocol(protocol.ProcessProtocol):
